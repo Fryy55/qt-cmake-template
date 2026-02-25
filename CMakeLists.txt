@@ -5,15 +5,7 @@ project(NitroCalc VERSION 1.0.0)
 set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-find_package(QT NAMES Qt6 Qt5)
-find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets)
-
-message(NOTICE "----- Qt version: ${QT_VERSION} -----")
-file(WRITE .github/workflows/qt/VERSION ${QT_VERSION})
-
-qt_standard_project_setup()
-set(CMAKE_AUTORCC ON)
-
+include(cmake/qt-setup.cmake)
 
 file(GLOB_RECURSE SOURCES CONFIGURE_DEPENDS src/*.cpp)
 qt_add_executable(${PROJECT_NAME}
@@ -24,7 +16,7 @@ qt_add_executable(${PROJECT_NAME}
     resources/qresource.qrc
 )
 
-include(resources/platform/platform-resource-setup.cmake)
+include(cmake/platform-resource-setup.cmake)
 
 target_include_directories(${PROJECT_NAME} PRIVATE
     src

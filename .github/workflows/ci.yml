@@ -26,14 +26,14 @@ jobs:
             export QT_VER=$(cat ./.github/workflows/qt/VERSION)
             export QT_VER_MAJOR=$(echo $QT_VER | grep -oE '^[0-9]+')
 
-            echo "::notice::----- Qt version: $QT_VER -----"
-            echo "::notice::----- Qt major version: $QT_VER_MAJOR -----"
+            echo "::notice::Qt version: $QT_VER"
+            echo "::notice::Qt major version: $QT_VER_MAJOR"
 
             echo "qt_ver=$QT_VER" >> $GITHUB_OUTPUT
             echo "qt_ver_major=$QT_VER_MAJOR" >> $GITHUB_OUTPUT
           else
-            echo "::error::----- Could not locate .github/workflows/qt/VERSION -----"
-            echo "::error::----- Please run the CMake configuration locally at least once."
+            echo "::error::Could not locate .github/workflows/qt/VERSION"
+            echo "::error::Please run the CMake configuration locally at least once."
 
             exit 1
           fi
