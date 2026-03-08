@@ -105,9 +105,21 @@ jobs:
         if: ${{ runner.os == 'MacOS' }}
         run: |
           cd ./bin
-          macdeployqt ./*.app -dmg
-          export DMG_OUT=$(echo ./*.dmg)
-          mv ./$DMG_OUT ../$DMG_OUT
+          export PROJECT_NAME=$(basename $(echo ./*.app) .app)
+          macdeployqt ./$PROJECT_NAME.app
+          export PLATFORM_PATH=../resources/platform/macos
+          export GEN_PATH=../build/platform/macos
+          # set up .dmg background
+          cp $PLATFORM_PATH/dmg-background.png ./dmg-background@2x.png
+          magick ./dmg-background@2x.png -resize 800 ./dmg-background.png
+          # copy the generated icon, json and guide
+          cp $GEN_PATH/icon.icns ./$PROJECT_NAME.icns
+          cp $GEN_PATH/dmg.json .
+          cp "$GEN_PATH/READ IF YOU HAVE PROBLEMS RUNNING" .
+          # package and move to root
+          export DMG_NAME=$PROJECT_NAME.dmg
+          npx appdmg@0.6.6 ./dmg.json ./$DMG_NAME
+          mv ./DMG_NAME ../DMG_NAME
 
 
       - name: Upload build artifact
