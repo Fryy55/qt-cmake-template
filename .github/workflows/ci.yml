@@ -105,8 +105,9 @@ jobs:
           # copy the .desktop and the icon to ./bin
           cp ../build/platform/linux/$PROJECT_NAME.desktop .
           cp ../resources/icon.png .
+          ls
           # package and move to root
-          linuxdeployqt ./$PROJECT_NAME -bundle-non-qt-libs -exclude-libs=libqsqlmimer -unsupported-allow-new-glibc
+          linuxdeployqt ./$PROJECT_NAME -bundle-non-qt-libs -exclude-libs=libqsqlmimer,libqsqloci -unsupported-allow-new-glibc
           linuxdeployqt ./$PROJECT_NAME -appimage -unsupported-allow-new-glibc
           ls
 
