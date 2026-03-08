@@ -34,9 +34,8 @@ if (${OS_NAME} STREQUAL Windows)
 elseif (${OS_NAME} STREQUAL Linux)
     set(DESKTOP_NAME ${PROJECT_NAME}.desktop)
     set(DESKTOP_PATH ${GEN_PATH}/${DESKTOP_NAME})
-    set(TEMPLATE_PATH ${PLATFORM_PATH}/template.desktop)
 
-    configure_file(${TEMPLATE_PATH} ${DESKTOP_PATH} @ONLY)
+    configure_file(${PLATFORM_PATH}/template.desktop ${DESKTOP_PATH} @ONLY)
 
     message(STATUS "${DESKTOP_NAME} generated - ${DESKTOP_PATH}")
 elseif (${OS_NAME} STREQUAL macOS)
@@ -63,6 +62,20 @@ elseif (${OS_NAME} STREQUAL macOS)
     target_sources(${PROJECT_NAME} PRIVATE ${ICNS_PATH})
 
     message(STATUS ".icns generation set up")
+
+
+    set(JSON_PATH ${GEN_PATH}/dmg.json)
+
+    configure_file(${PLATFORM_PATH}/template.json ${JSON_PATH} @ONLY)
+
+    message(STATUS "dmg.json generated - ${JSON_PATH}")
+
+
+    set(GUIDE_PATH "${GEN_PATH}/READ IF YOU HAVE PROBLEMS RUNNING")
+
+    configure_file(${PLATFORM_PATH}/template.guide ${GUIDE_PATH} @ONLY)
+
+    message(STATUS "Guide generated - \"${GUIDE_PATH}\"")
 else()
     message(FATAL_ERROR "Platform ${OS_NAME} isn't supported!")
 endif()

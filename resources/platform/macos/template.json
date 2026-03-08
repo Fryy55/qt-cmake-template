@@ -1,0 +1,39 @@
+{
+	"title": "@PROJECT_NAME@",
+	"icon": "@PROJECT_NAME@.icns",
+	"background": "dmg-background.png",
+	"window": {
+		"size": {
+			"width": 800,
+			"height": 600
+		}
+	},
+	"contents": [
+		{
+			"x": 400, "y": 150,
+			"type": "file", "path": "@PROJECT_NAME@.icns"
+		},
+		{
+			"x": 150, "y": 450,
+			"type": "file", "path": "@PROJECT_NAME@.app"
+		},
+		{
+			"x": 650, "y": 450,
+			"type": "link", "path": "/Applications"
+		},
+		{
+			"x": 100, "y": 100,
+			"type": "file", "path": "READ IF YOU HAVE PROBLEMS RUNNING"
+		},
+
+		{
+			"x": 3681, "y": 3681,
+			"type": "position", "path": ".background"
+		},
+		{
+			"x": 3681, "y": 3681,
+			"type": "position", "path": ".VolumeIcon.icns"
+		}
+	],
+	"icon-size": 128
+}

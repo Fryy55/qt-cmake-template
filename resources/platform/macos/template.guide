@@ -1,0 +1,9 @@
+If running the application gives a "___ is damaged and can’t be opened. You should eject the disk image" error, run this command at the .dmg file's directory:
+
+xattr -cr ./@PROJECT_NAME@.dmg
+
+or, if you've already installed it into /Applications:
+
+xattr -cr /Applications/@PROJECT_NAME@.app
+
+This happens due to macOS security (Gatekeeper) not allowing to run unsigned/unnotarized software, which applies to this application due to lack of development certification.
