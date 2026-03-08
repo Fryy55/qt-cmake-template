@@ -48,11 +48,11 @@ jobs:
           bin-name: windows-x64
 
         - name: Linux x64
-          os: ubuntu-24.04
+          os: ubuntu-22.04
           bin-name: linux-x64
 
         - name: Linux ARM64
-          os: ubuntu-24.04-arm
+          os: ubuntu-22.04-arm
           bin-name: linux-arm64
 
         - name: macOS
@@ -86,6 +86,7 @@ jobs:
         if: ${{ runner.os == 'Linux' }}
         uses: Fryy55/install-linuxdeployqt-action@main
 
+
       # platform specific packaging
       - name: Bundle Windows
         if: ${{ runner.os == 'Windows' }}
@@ -98,14 +99,22 @@ jobs:
 
       - name: Bundle Linux
         if: ${{ runner.os == 'Linux' }}
-        run: QT_SELECT=qt${{ needs.find-qt-ver.outputs.qt_ver_major }} linuxdeployqt ./bin/* -unsupported-allow-new-glibc -exclude-libs=libqsqlmimer,libqsqloci; ls; echo ---; ls ./bin; echo ---; ls ..; echo ---; ls ../Qt/**; echo ---; ls ../..
-
+        run: |
+          cd ./bin
+          export PROJECT_NAME=$(ls)
+          # copy the .desktop and the icon to ./bin
+          cp ../build/platform/linux/$PROJECT_NAME.desktop .
+          cp ../resources/icon.png .
+          # package and move to root
+          linuxdeployqt ./$PROJECT_NAME -bundle-non-qt-libs
+          linuxdeployqt ./$PROJECT_NAME -appimage
+          ls
 
       - name: Bundle MacOS
         if: ${{ runner.os == 'MacOS' }}
         run: |
           cd ./bin
-          export PROJECT_NAME=$(basename $(echo ./*.app) .app)
+          export PROJECT_NAME=$(basename $(ls) .app)
           macdeployqt ./$PROJECT_NAME.app
           export PLATFORM_PATH=../resources/platform/macos
           export GEN_PATH=../build/platform/macos
@@ -131,5 +140,5 @@ jobs:
           name: qt-build-${{ matrix.config.bin-name }}
           path: |
             ./*.zip
-            ${{ github.workspace }}/**/*.AppImage
+            ./*.AppImage
             ./*.dmg
