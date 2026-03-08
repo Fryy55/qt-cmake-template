@@ -1,4 +1,4 @@
-If running the application gives a "___ is damaged and can’t be opened. You should eject the disk image" error, run this command at the .dmg file's directory:
+If running the application gives a "___ is damaged and can’t be opened" error, run this command at the .dmg file's directory:
 
 xattr -cr ./@PROJECT_NAME@.dmg
 
