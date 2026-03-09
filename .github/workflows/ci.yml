@@ -105,16 +105,19 @@ jobs:
         run: |
           cd ./bin
           export PROJECT_NAME=$(ls)
-          # copy the .desktop and the icon to ./bin
+          # create ./deploy and copy the binary, the .desktop and the icon there
+          cd ..
+          mkdir ./deploy
+          cp ./bin/$PROJECT_NAME ./deploy/$PROJECT_NAME
+          cd ./deploy
           cp ../build/platform/linux/$PROJECT_NAME.desktop .
           cp ../resources/icon.png .
           ls
           # package and move to root
-          export DEPLOY_FLAGS='-unsupported-allow-new-glibc -exclude-libs=libqsqlmimer'
-          linuxdeployqt ./$PROJECT_NAME -bundle-non-qt-libs $DEPLOY_FLAGS
+          linuxdeployqt ./$PROJECT_NAME -bundle-non-qt-libs -unsupported-allow-new-glibc -exclude-libs=libqsqlmimer
           echo 'halfway there'
           ls
-          linuxdeployqt ./$PROJECT_NAME -appimage $DEPLOY_FLAGS
+          linuxdeployqt ./$PROJECT_NAME -appimage -unsupported-allow-new-glibc
           ls
 
       - name: Bundle MacOS
