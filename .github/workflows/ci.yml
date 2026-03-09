@@ -84,7 +84,7 @@ jobs:
 
       - name: Install linuxdeployqt
         if: ${{ runner.os == 'Linux' }}
-        uses: Fryy55/install-linuxdeployqt-action@main
+        uses: Fryy55/install-linuxdeployqt-action@v1.0.0
 
       - name: Install Oracle Instant Client
         if: ${{ runner.os == 'Linux' && runner.arch == 'X64' }}
