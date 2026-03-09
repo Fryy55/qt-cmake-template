@@ -87,7 +87,7 @@ jobs:
         uses: Fryy55/install-linuxdeployqt-action@main
         with:
           arch: x64
-          cache: true
+          cache: false
 
       - name: Install Oracle Instant Client
         if: ${{ runner.os == 'Linux' && runner.arch == 'X64' }}
