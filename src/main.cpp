@@ -8,6 +8,7 @@ int main(int argc, char** argv) {
 	#ifdef Q_OS_LINUX
 		a.setWindowIcon(QIcon(":/icon.png"));
 	#endif
+	a.setApplicationDisplayName("Template app");
 
 	QMainWindow w{};
 	w.show();
