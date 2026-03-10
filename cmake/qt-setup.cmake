@@ -25,5 +25,6 @@ message(STATUS "Qt version: ${QT_VERSION}")
 
 qt_standard_project_setup()
 set(CMAKE_AUTORCC ON)
+set(CMAKE_AUTOMOC ON)
 
 message(STATUS "Qt setup complete --")
