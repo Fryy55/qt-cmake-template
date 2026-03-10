@@ -11,32 +11,12 @@ jobs:
     name: Find Qt version
     runs-on: ubuntu-latest
     outputs:
-      qt_ver: ${{ steps.save_ver.outputs.qt_ver }}
-      qt_ver_major: ${{ steps.save_ver.outputs.qt_ver_major }}
+      qt_ver: ${{ steps.find-qt-ver.outputs.qt-ver }}
 
     steps:
-      - name: Checkout repo
-        uses: actions/checkout@v4
-
-      - name: Save Qt version
-        id: save_ver
-        shell: bash
-        run: |
-          if [ -f ./.github/workflows/qt/VERSION ]; then
-            export QT_VER=$(cat ./.github/workflows/qt/VERSION)
-            export QT_VER_MAJOR=$(echo $QT_VER | grep -oE '^[0-9]+')
-
-            echo "::notice::Qt version: $QT_VER"
-            echo "::notice::Qt major version: $QT_VER_MAJOR"
-
-            echo "qt_ver=$QT_VER" >> $GITHUB_OUTPUT
-            echo "qt_ver_major=$QT_VER_MAJOR" >> $GITHUB_OUTPUT
-          else
-            echo "::error::Could not locate .github/workflows/qt/VERSION"
-            echo "::error::Please run the CMake configuration locally at least once."
-
-            exit 1
-          fi
+      - name: Find Qt version
+        id: find-qt-ver
+        uses: Fryy55/cavansite/actions/find-qt-version@main
 
   build:
     strategy:
@@ -45,18 +25,22 @@ jobs:
         config:
         - name: Windows
           os: windows-latest
+          shell: pwsh
           bin-name: windows-x64
 
         - name: Linux x64
           os: ubuntu-24.04
+          shell: bash
           bin-name: linux-x64
 
         - name: Linux ARM64
           os: ubuntu-24.04-arm
+          shell: bash
           bin-name: linux-arm64
 
         - name: macOS
           os: macos-14
+          shell: bash
           bin-name: macos-arm
 
     name: ${{ matrix.config.name }}
@@ -64,86 +48,9 @@ jobs:
     needs: ['find-qt-ver']
 
     steps:
-      - name: Checkout repo
-        uses: actions/checkout@v4
-
-      - name: Install Qt
-        uses: jurplel/install-qt-action@v4
-        with:
-          version: ${{ needs.find-qt-ver.outputs.qt_ver }}
-          cache: true
-
-      - name: Configure CMake
-        run: |
-          mkdir ./build
-          cd ./build
-          cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++ -S .. -B . -G Ninja
-
       - name: Build the app
-        run: cmake --build ./build --config Release
-
-      - name: Install linuxdeployqt
-        if: ${{ runner.os == 'Linux' }}
-        uses: Fryy55/install-linuxdeployqt-action@v1.0.0
-
-      - name: Install Oracle Instant Client
-        if: ${{ runner.os == 'Linux' && runner.arch == 'X64' }}
-        uses: iamazeem/setup-oracle-instant-client-action@v2
-
-
-      # platform specific packaging
-      - name: Bundle Windows
-        if: ${{ runner.os == 'Windows' }}
-        shell: pwsh
-        run: |
-          $PROJECT_NAME = [System.IO.Path]::GetFileNameWithoutExtension((ls ./bin))
-          windeployqt --release --compiler-runtime ./bin/$PROJECT_NAME.exe
-          Compress-Archive -Path ./bin/* -DestinationPath ./$PROJECT_NAME-windows.zip
-
-      - name: Bundle Linux
-        if: ${{ runner.os == 'Linux' }}
-        run: |
-          export PROJECT_NAME=$(ls ./bin)
-          export PROJECT_ROOT=$(pwd)
-          # copy the binary, the .desktop and the icon to the temp dir
-          cd $(mktemp -d)
-          cp $PROJECT_ROOT/bin/$PROJECT_NAME .
-          cp $PROJECT_ROOT/build/platform/linux/$PROJECT_NAME.desktop .
-          cp $PROJECT_ROOT/resources/icon.png .
-          # package and move to root
-          linuxdeployqt ./$PROJECT_NAME -bundle-non-qt-libs -unsupported-allow-new-glibc -exclude-libs=libqsqlmimer
-          linuxdeployqt ./$PROJECT_NAME -appimage -unsupported-allow-new-glibc
-          mv ./*.AppImage $PROJECT_ROOT/
-
-      - name: Bundle MacOS
-        if: ${{ runner.os == 'MacOS' }}
-        run: |
-          cd ./bin
-          export PROJECT_NAME=$(basename $(ls) .app)
-          macdeployqt ./$PROJECT_NAME.app
-          export PLATFORM_PATH=../resources/platform/macos
-          export GEN_PATH=../build/platform/macos
-          # set up .dmg background
-          cp $PLATFORM_PATH/dmg-background.png ./dmg-background@2x.png
-          sips --resampleWidth 800 ./dmg-background@2x.png -o ./dmg-background.png > /dev/null
-          # copy the generated icon, json and guide
-          cp $GEN_PATH/icon.icns ./$PROJECT_NAME.icns
-          cp $GEN_PATH/dmg.json .
-          cp "$GEN_PATH/READ IF YOU HAVE PROBLEMS RUNNING" .
-          # log the structure
-          echo 'Current ./bin/ directory:'
-          ls
-          # package and move to root
-          export DMG_NAME=$PROJECT_NAME.dmg
-          npx appdmg@0.6.6 ./dmg.json ./$DMG_NAME
-          mv ./$DMG_NAME ../$DMG_NAME
-
-
-      - name: Upload build artifact
-        uses: actions/upload-artifact@v4
+        uses: Fryy55/cavansite/actions/build-and-package@main
         with:
-          name: qt-build-${{ matrix.config.bin-name }}
-          path: |
-            ./*.zip
-            ./*.AppImage
-            ./*.dmg
+          qt-ver: ${{ needs.find-qt-ver.outputs.qt_ver }}
+          shell: ${{ matrix.config.shell }}
+          bin-name: ${{ matrix.config.bin-name }}
