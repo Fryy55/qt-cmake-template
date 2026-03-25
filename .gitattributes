@@ -1,2 +1,2 @@
 resources/**/*.sh linguist-vendored
-cmake/**/*.cmake
+cmake/**/*.cmake linguist-vendored
