@@ -12,14 +12,15 @@ Once cloned, customize the template by:
 > It's **illegal** to remove the original license, as per its conditions. Add your own license _along_ it, not _instead_ of it
 
 For further platform customization, you can:
-- Modify `resources/platform/linux/template.desktop` to better reflect your application. It can pull in CMake variables enclosed in `@`s, just as any file that has `template` as a basename
+- Modify the `Info.plist` that is used on macOS by editing `resources/platform/macos/template.plist` and filling in empty fields/adding other keys. It can pull in CMake variables enclosed in `@`s, just as any file that has `template` as a basename
+- Modify `resources/platform/linux/template.desktop` to better reflect your application
 - Customize the `.dmg` image background and structure by modifying `dmg-background.png` and `template.json` at `resources/platform/macos` (**see `Caution` below**)
 
 > [!CAUTION]
 > Unless you've introduced your own changes to backing `.cmake` files and CI pipeline, _do NOT_ change the **filenames**, **paths**, **image dimensions** and **directory structure** of anything inside `resources/`. This is especially relevant for images - modifying their contents is fine, but please pay extra attention to keeping _dimensions_ intact
 
 # Development
-As your project grows, you will have more source files, headers and resources in it.
+As your project grows, you will have more source files, headers and resources in it
 
 All source files ending in `.cpp` inside `src/` are already globbed by CMake, but feel free to add more globbing patterns if needed
 

@@ -11,7 +11,7 @@ set(PLATFORM_PATH ${CMAKE_CURRENT_SOURCE_DIR}/resources/platform/${OS_NAME_LOWER
 message(STATUS "Setting up resources for ${OS_NAME} --")
 if (${OS_NAME} STREQUAL Windows)
     find_program(MAGICK_BINARY NAMES magick magick.exe REQUIRED)
-    message(STATUS "magick binary found - ${MAGICK_BINARY}")
+    message(STATUS "magick binary found - '${MAGICK_BINARY}'")
 
     set(ICO_PATH ${GEN_PATH}/icon.ico)
     target_include_directories(${PROJECT_NAME} PRIVATE ${GEN_PATH})
@@ -21,7 +21,7 @@ if (${OS_NAME} STREQUAL Windows)
         OUTPUT ${ICO_PATH}
         COMMAND echo "-- Generating icon.ico"
         COMMAND ${MAGICK_BINARY} ${PNG_PATH} -define icon:auto-resize=16,24,32,48,64,96,128,256 -compress zip ${ICO_PATH}
-        COMMAND echo "-- icon.ico generated - ${ICO_PATH}"
+        COMMAND echo "-- icon.ico generated - '${ICO_PATH}'"
         DEPENDS ${PNG_PATH}
         VERBATIM
     )
@@ -37,12 +37,29 @@ elseif (${OS_NAME} STREQUAL Linux)
 
     configure_file(${PLATFORM_PATH}/template.desktop ${DESKTOP_PATH} @ONLY)
 
-    message(STATUS "${DESKTOP_NAME} generated - ${DESKTOP_PATH}")
+    message(STATUS "${DESKTOP_NAME} generated - '${DESKTOP_PATH}'")
 elseif (${OS_NAME} STREQUAL macOS)
+    set(INFO_PLIST_PATH ${GEN_PATH}/Info.plist)
+    set(FAKE_FILE "${GEN_PATH}/FILE_THAT_DOES_NOT_EXIST")
+
+    configure_file(${PLATFORM_PATH}/template.plist ${INFO_PLIST_PATH} @ONLY)
+    add_custom_command(
+        OUTPUT ${FAKE_FILE}
+        COMMAND ${CMAKE_COMMAND} -E copy "${INFO_PLIST_PATH}" "$<TARGET_BUNDLE_CONTENT_DIR:${PROJECT_NAME}>"
+        DEPENDS ${INFO_PLIST_PATH}
+        COMMENT "Setting up Info.plist"
+        VERBATIM
+    )
+    add_custom_target(InfoPlistReplacement ALL DEPENDS ${FAKE_FILE})
+    add_dependencies(${PROJECT_NAME} InfoPlistReplacement)
+
+    message(STATUS "Info.plist generation set up")
+
+
     find_program(SIPS_BINARY NAMES sips REQUIRED)
-    message(STATUS "sips binary found - ${SIPS_BINARY}")
+    message(STATUS "sips binary found - '${SIPS_BINARY}'")
     find_program(ICONUTIL_BINARY NAMES iconutil REQUIRED)
-    message(STATUS "iconutil binary found - ${ICONUTIL_BINARY}")
+    message(STATUS "iconutil binary found - '${ICONUTIL_BINARY}'")
 
     set(ICNS_PATH ${GEN_PATH}/icon.icns)
     set(PNG_PATH ${CMAKE_CURRENT_SOURCE_DIR}/resources/icon.png)
@@ -68,22 +85,20 @@ elseif (${OS_NAME} STREQUAL macOS)
 
     configure_file(${PLATFORM_PATH}/template.json ${JSON_PATH} @ONLY)
 
-    message(STATUS "dmg.json generated - ${JSON_PATH}")
+    message(STATUS "dmg.json generated - '${JSON_PATH}'")
 
 
     set(GUIDE_PATH "${GEN_PATH}/READ IF YOU HAVE PROBLEMS RUNNING")
 
     configure_file(${PLATFORM_PATH}/template.guide ${GUIDE_PATH} @ONLY)
 
-    message(STATUS "Guide generated - \"${GUIDE_PATH}\"")
+    message(STATUS "Guide generated - '${GUIDE_PATH}'")
 else()
     message(FATAL_ERROR "Platform ${OS_NAME} isn't supported!")
 endif()
 
 message(STATUS "Setting up app binary path")
 set_target_properties(${PROJECT_NAME} PROPERTIES
-    MACOSX_BUNDLE_BUNDLE_VERSION ${PROJECT_VERSION}
-    MACOSX_BUNDLE_SHORT_VERSION_STRING ${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}
     RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/bin$<0:>
 )
 
