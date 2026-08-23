@@ -23,3 +23,13 @@ target_include_directories(${PROJECT_NAME} PRIVATE
 )
 
 link_to_qt_modules(Widgets Svg) # you can add more modules here as needed
+
+# add CPM libraries as needed
+include(cmake/CPM.cmake)
+
+#[[ uncomment to add cavansite (https://github.com/Fryy55/cavansite)
+    set(CAVANSITE_ADD_BREEZE all)
+    CPMAddPackage("gh:Fryy55/cavansite@1.0.1")
+
+    target_link_libraries(${PROJECT_NAME} PRIVATE cavansite)
+]]
