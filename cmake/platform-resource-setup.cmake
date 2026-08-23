@@ -80,4 +80,11 @@ else()
     message(FATAL_ERROR "Platform ${OS_NAME} isn't supported!")
 endif()
 
+message(STATUS "Setting up app binary path")
+set_target_properties(${PROJECT_NAME} PROPERTIES
+    MACOSX_BUNDLE_BUNDLE_VERSION ${PROJECT_VERSION}
+    MACOSX_BUNDLE_SHORT_VERSION_STRING ${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}
+    RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/bin$<0:>
+)
+
 message(STATUS "Resource setup complete --")

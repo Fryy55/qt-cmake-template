@@ -28,3 +28,18 @@ set(CMAKE_AUTORCC ON)
 set(CMAKE_AUTOMOC ON)
 
 message(STATUS "Qt setup complete --")
+
+
+function(link_to_qt_modules)
+    message(STATUS "Linking to ${ARGC} modules: ${ARGV}")
+
+    find_package(Qt${QT_VERSION_MAJOR} COMPONENTS ${ARGV} QUIET)
+    foreach(MODULE IN LISTS ARGV)
+        set(MODULE_NAME "Qt${QT_VERSION_MAJOR}::${MODULE}")
+        if (NOT TARGET Qt${QT_VERSION_MAJOR}::${MODULE})
+            message(FATAL_ERROR "Failed to find module ${MODULE_NAME}! Make sure you have it installed on your system, check for any misspellings and try again")
+        endif()
+
+        target_link_libraries(${PROJECT_NAME} PRIVATE ${MODULE_NAME})
+    endforeach()
+endfunction()
