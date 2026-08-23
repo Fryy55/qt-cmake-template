@@ -29,7 +29,7 @@ include(cmake/CPM.cmake)
 
 # #[[ uncomment to add cavansite (https://github.com/Fryy55/cavansite)
     set(CAVANSITE_ADD_BREEZE all)
-    CPMAddPackage("gh:Fryy55/cavansite@1.0.1")
+    CPMAddPackage("gh:Fryy55/cavansite@1.0.0")
 
     target_link_libraries(${PROJECT_NAME} PRIVATE cavansite)
 # ]]
