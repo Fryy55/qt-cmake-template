@@ -24,7 +24,7 @@ jobs:
       matrix:
         config:
         - name: Windows
-          os: windows-2022
+          os: windows-latest
           shell: pwsh
           bin-name: windows-x64
 
@@ -39,7 +39,7 @@ jobs:
           bin-name: linux-arm64
 
         - name: macOS
-          os: macos-14
+          os: macos-latest
           shell: bash
           bin-name: macos-arm
 
