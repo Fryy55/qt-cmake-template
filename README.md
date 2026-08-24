@@ -23,7 +23,7 @@ For further platform customization, you can:
 Follow this guide to setup this template _from a specific tag (release)_ instead of the latest commit
 ```bash
 # shallowly clone this repository somewhere (replace v1.0.0 with the release you want to use). `cd` into that copy
-git clone --depth 1 --branch tags/v1.0.0 https://github.com/Fryy55/qt-cmake-template.git
+git clone --depth 1 --branch v1.0.0 https://github.com/Fryy55/qt-cmake-template.git
 cd ./qt-cmake-template/
 
 # delete all existing tags (do it one by one if you can't use `xargs` or use command substitution)
