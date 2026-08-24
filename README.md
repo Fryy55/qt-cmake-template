@@ -29,8 +29,9 @@ cd ./qt-cmake-template/
 # delete all existing tags (do it one by one if you can't use `xargs` or use command substitution)
 git tag -l | xargs git tag -d
 
-# create an initial commit off the current repository state
+# create an initial commit and a main branch off the current repository state
 git commit --amend -m 'Initial commit'
+git switch -c main
 
 # replace the upstream url with your repository
 # it's preferred you create this repo with the `Use this template` feature off the original
