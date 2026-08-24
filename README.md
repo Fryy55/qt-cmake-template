@@ -1,5 +1,5 @@
 # Qt CMake template
-A template for Qt development with CMake
+A template for Qt development with CMake. Check out [cavansite](https://github.com/Fryy55/cavansite)!
 
 # Setup
 Once cloned, customize the template by:
